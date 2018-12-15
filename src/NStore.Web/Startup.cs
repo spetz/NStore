@@ -8,6 +8,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using NStore.Web.Framework;
+using NStore.Web.ViewModels;
 
 namespace NStore.Web
 {
@@ -25,6 +26,7 @@ namespace NStore.Web
         {
             services.Configure<AppOptions>(Configuration.GetSection("app"));
             services.AddTransient<ErrorHandlerMiddleware>();
+            services.AddSingleton<ProductsProvider>();
             
             services.Configure<CookiePolicyOptions>(options =>
             {
