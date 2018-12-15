@@ -1,9 +1,7 @@
 ﻿using Microsoft.AspNetCore;
-using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Routing;
-using Microsoft.Extensions.DependencyInjection;
+using Serilog;
+using Serilog.Events;
 
 namespace NStore.Web
 {
@@ -28,6 +26,14 @@ namespace NStore.Web
 //                        );
 //                    });
 //                })
+                .UseSerilog((ctx, cfg) =>
+                {
+                    cfg.WriteTo.ColoredConsole()
+                        .MinimumLevel.Is(LogEventLevel.Information)
+                        .Enrich.FromLogContext()
+                        .Enrich.WithProperty("Environment",
+                            ctx.HostingEnvironment.EnvironmentName);
+                })
                 .UseStartup<Startup>();
     }
 }

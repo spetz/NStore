@@ -30,7 +30,7 @@ namespace NStore.Web
             services.AddTransient<ErrorHandlerMiddleware>();
             services.AddSingleton<ProductsProvider>();
             services.AddHostedService<UsersProcessorHostedService>();
-            
+
             services.Configure<CookiePolicyOptions>(options =>
             {
                 // This lambda determines whether user consent for non-essential cookies is needed for a given request.
@@ -53,6 +53,8 @@ namespace NStore.Web
             });
 
             services.AddMemoryCache();
+            services.AddHealthChecks()
+                .AddCheck<RandomHealthCheck>("random");
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -72,6 +74,7 @@ namespace NStore.Web
 
 //            app.UseHttpsRedirection();
             app.UseMiddleware<ErrorHandlerMiddleware>();
+            app.UseHealthChecks("/health");
             app.UseStaticFiles();
             app.UseCookiePolicy();
             app.UseSwagger();
