@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -40,6 +41,14 @@ namespace NStore.Web.Pages.Products
             }
             Product.Id = Guid.NewGuid();
             _productsProvider.Products.Add(Product);
+
+            return RedirectToPage();
+        }
+
+        public IActionResult OnPostDelete(Guid id)
+        {
+            var product = _productsProvider.Products.SingleOrDefault(p => p.Id == id);
+            _productsProvider.Products.Remove(product);
 
             return RedirectToPage();
         }
