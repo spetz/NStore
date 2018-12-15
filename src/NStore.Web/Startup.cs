@@ -51,6 +51,8 @@ namespace NStore.Web
             {
                 c.BaseAddress = new Uri("https://reqres.in/api/");
             });
+
+            services.AddMemoryCache();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
