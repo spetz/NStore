@@ -29,6 +29,7 @@ namespace NStore.Web
             services.Configure<AppOptions>(Configuration.GetSection("app"));
             services.AddTransient<ErrorHandlerMiddleware>();
             services.AddSingleton<ProductsProvider>();
+            services.AddHostedService<UsersProcessorHostedService>();
             
             services.Configure<CookiePolicyOptions>(options =>
             {
@@ -45,6 +46,11 @@ namespace NStore.Web
                 Title = "NStore API",
                 Version = "v1"
             }));
+
+            services.AddHttpClient<IReqResClient, ReqResClient>(c =>
+            {
+                c.BaseAddress = new Uri("https://reqres.in/api/");
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
