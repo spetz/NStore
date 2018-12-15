@@ -28,6 +28,8 @@ namespace NStore.Web.Controllers
         }
 
         [HttpGet("{id:guid}")]
+        [ProducesResponseType(typeof(ProductViewModel), 200)]
+        [ProducesResponseType(404)]
         public ActionResult<ProductViewModel> Get(Guid id)
             => Result(_productsProvider.Products.SingleOrDefault(p => p.Id == id));
 

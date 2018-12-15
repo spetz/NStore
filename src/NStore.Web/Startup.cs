@@ -10,6 +10,7 @@ using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using NStore.Web.Framework;
 using NStore.Web.ViewModels;
+using Swashbuckle.AspNetCore.Swagger;
 
 namespace NStore.Web
 {
@@ -38,6 +39,12 @@ namespace NStore.Web
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2)
                 .AddJsonOptions(o => o.SerializerSettings.Formatting = Formatting.Indented);
+
+            services.AddSwaggerGen(o => o.SwaggerDoc("v1", new Info
+            {
+                Title = "NStore API",
+                Version = "v1"
+            }));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -59,6 +66,8 @@ namespace NStore.Web
             app.UseMiddleware<ErrorHandlerMiddleware>();
             app.UseStaticFiles();
             app.UseCookiePolicy();
+            app.UseSwagger();
+            app.UseSwaggerUI(o => o.SwaggerEndpoint("/swagger/v1/swagger.json", "NStore API v1"));
 
 //            app.Use(async (ctx, next) =>
 //            {
