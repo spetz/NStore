@@ -39,6 +39,20 @@ namespace NStore.Web.Controllers
 
             return CreatedAtAction(nameof(Get), new {id = product.Id}, null);
         }
+
+        [HttpDelete("{id:guid}")]
+        public ActionResult Delete(Guid id)
+        {
+            var product = _productsProvider.Products.SingleOrDefault(p => p.Id == id);
+            if (product == null)
+            {
+                return NotFound();
+            }
+            
+            _productsProvider.Products.Remove(product);
+            
+            return NoContent();
+        }
     }
 
     public class BrowseProducts
