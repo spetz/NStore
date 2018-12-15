@@ -24,6 +24,7 @@ namespace NStore.Web
         public void ConfigureServices(IServiceCollection services)
         {
             services.Configure<AppOptions>(Configuration.GetSection("app"));
+            services.AddTransient<ErrorHandlerMiddleware>();
             
             services.Configure<CookiePolicyOptions>(options =>
             {
@@ -52,22 +53,23 @@ namespace NStore.Web
             }
 
 //            app.UseHttpsRedirection();
+            app.UseMiddleware<ErrorHandlerMiddleware>();
             app.UseStaticFiles();
             app.UseCookiePolicy();
 
-            app.Use(async (ctx, next) =>
-            {
-                Console.WriteLine("BEFORE");
-//                Console.WriteLine($"PATH: {ctx.Request.Path}");
-                await next();
-                Console.WriteLine("AFTER");
-            });
-            
-            app.Run(async ctx =>
-            {
-                Console.WriteLine("RUN");
-                await Task.CompletedTask;
-            });
+//            app.Use(async (ctx, next) =>
+//            {
+//                Console.WriteLine("BEFORE");
+////                Console.WriteLine($"PATH: {ctx.Request.Path}");
+//                await next();
+//                Console.WriteLine("AFTER");
+//            });
+//            
+//            app.Run(async ctx =>
+//            {
+//                Console.WriteLine("RUN");
+//                await Task.CompletedTask;
+//            });
 
             app.UseMvc();
         }
