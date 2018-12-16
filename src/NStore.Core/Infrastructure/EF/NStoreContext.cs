@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using NStore.Core.Domain;
+using NStore.Core.Infrastructure.EF.Configurations;
 
 namespace NStore.Core.Infrastructure.EF
 {
@@ -31,6 +32,11 @@ namespace NStore.Core.Infrastructure.EF
 
             optionsBuilder.UseSqlServer(_sqlOptions.Value.ConnectionString,
                 o => o.MigrationsAssembly("NStore.Web"));
+        }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.ApplyConfiguration(new ProductConfiguration());
         }
     }
 }

@@ -24,8 +24,20 @@ namespace NStore.Core.Infrastructure.EF.Repositories
 
         public  async Task AddAsync(Product product)
         {
-            await _context.Products.AddAsync(product);
-            await _context.SaveChangesAsync();
+            if (_context.Database.IsInMemory())
+            {
+                await _context.Products.AddAsync(product);
+                await _context.SaveChangesAsync();
+                
+                return;
+            }
+            
+            using (var transaction = await _context.Database.BeginTransactionAsync())
+            {
+                await _context.Products.AddAsync(product);
+                await _context.SaveChangesAsync();
+                transaction.Commit();
+            }
         }
 
         public async Task UpdateAsync(Product product)
