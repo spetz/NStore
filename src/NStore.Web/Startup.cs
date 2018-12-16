@@ -10,6 +10,8 @@ using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using NStore.Core.Domain.Repositories;
 using NStore.Core.Infrastructure.Cache.Repositories;
+using NStore.Core.Infrastructure.EF;
+using NStore.Core.Infrastructure.EF.Repositories;
 using NStore.Core.Services.Products;
 using NStore.Web.Framework;
 using NStore.Web.ViewModels;
@@ -30,6 +32,7 @@ namespace NStore.Web
         public void ConfigureServices(IServiceCollection services)
         {
             services.Configure<AppOptions>(Configuration.GetSection("app"));
+            services.Configure<SqlOptions>(Configuration.GetSection("sql"));
             services.AddTransient<ErrorHandlerMiddleware>();
             services.AddSingleton<ProductsProvider>();
             services.AddHostedService<UsersProcessorHostedService>();
@@ -60,7 +63,9 @@ namespace NStore.Web
                 .AddCheck<RandomHealthCheck>("random");
 
             services.AddTransient<IProductService, ProductService>();
-            services.AddSingleton<IProductRepository, InMemoryProductRepository>();
+//            services.AddSingleton<IProductRepository, InMemoryProductRepository>();
+            services.AddTransient<IProductRepository, EfProductRepository>();
+            services.AddDbContext<NStoreContext>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
