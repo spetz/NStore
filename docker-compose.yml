@@ -1,0 +1,33 @@
+version: "3.5"
+
+services:
+  web:
+    image: nstore.web
+    container_name: nstore.web
+    ports:
+      - 5050:5000
+    networks:
+      - nstore
+    depends_on:
+      - mssql
+
+  mssql:
+    image: microsoft/mssql-server-linux
+    container_name: mssql
+    ports:
+      - 1433:1433
+    networks:
+      - nstore
+    environment:
+      - ACCEPT_EULA=Y
+      - MSSQL_SA_PASSWORD=Abcd1234!
+    volumes:
+      - mssql:/var/opt/mssql
+
+networks:
+  nstore:
+    name: nstore-network
+
+volumes:
+  mssql:
+    driver: local
