@@ -1,57 +1,48 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using NStore.Web.ViewModels;
+using NStore.Core.Services.Products;
+using NStore.Core.Services.Products.Dto;
 
 namespace NStore.Web.Controllers
 {
     public class ProductsController : BaseController
     {
-        private readonly ProductsProvider _productsProvider;
+        private readonly IProductService _productService;
 
-        public ProductsController(ProductsProvider productsProvider)
+        public ProductsController(IProductService productService)
         {
-            _productsProvider = productsProvider;
+            _productService = productService;
         }
 
         [HttpGet]
-        public ActionResult<IEnumerable<ProductViewModel>> Get([FromQuery] BrowseProducts query)
+        public async Task<ActionResult<IEnumerable<ProductDto>>> Get([FromQuery] BrowseProducts query)
         {
-            var products = _productsProvider.Products.AsEnumerable();
-            if (!string.IsNullOrWhiteSpace(query.Name))
-            {
-                products = products.Where(p => p.Name.Contains(query.Name));
-            }
+            var products = await _productService.BrowseAsync(query.Name);
 
             return Ok(products);
         }
 
         [HttpGet("{id:guid}")]
-        [ProducesResponseType(typeof(ProductViewModel), 200)]
+        [ProducesResponseType(typeof(ProductDetailsDto), 200)]
         [ProducesResponseType(404)]
-        public ActionResult<ProductViewModel> Get(Guid id)
-            => Result(_productsProvider.Products.SingleOrDefault(p => p.Id == id));
+        public async Task<ActionResult<ProductDetailsDto>> Get(Guid id)
+            => Result(await _productService.GetAsync(id));
 
         [HttpPost]
-        public ActionResult Post(ProductViewModel product)
+        public async Task<ActionResult> Post(ProductDetailsDto product)
         {
             product.Id = Guid.NewGuid();
-            _productsProvider.Products.Add(product);
+            await _productService.AddAsync(product);
 
             return CreatedAtAction(nameof(Get), new {id = product.Id}, null);
         }
 
         [HttpDelete("{id:guid}")]
-        public ActionResult Delete(Guid id)
+        public async Task<ActionResult> Delete(Guid id)
         {
-            var product = _productsProvider.Products.SingleOrDefault(p => p.Id == id);
-            if (product == null)
-            {
-                return NotFound();
-            }
-            
-            _productsProvider.Products.Remove(product);
+            await _productService.DeleteAsync(id);
             
             return NoContent();
         }
