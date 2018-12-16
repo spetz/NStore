@@ -11,6 +11,6 @@ namespace NStore.Core.Services.Products
         Task<IEnumerable<ProductDto>> BrowseAsync(string name);
         Task AddAsync(ProductDetailsDto productDto);
         Task UpdateAsync(ProductDetailsDto productDto);
-        Task RemoveAsync(Guid id);
+        Task DeleteAsync(Guid id);
     }
 }

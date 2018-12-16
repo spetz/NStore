@@ -1,18 +1,21 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using NStore.Core.Services.Products;
+using NStore.Core.Services.Products.Dto;
 using NStore.Web.ViewModels;
 
 namespace NStore.Web.Pages.Products
 {
     public class IndexModel : PageModel
     {
-        private readonly ProductsProvider _productsProvider;
-        
-        public IEnumerable<ProductViewModel> Products { get; private set; }
+        private readonly IProductService _productService;
+
+        public IEnumerable<ProductDto> Products { get; private set; }
 
         public IEnumerable<SelectListItem> Categories => new List<SelectListItem>
         {
@@ -21,34 +24,34 @@ namespace NStore.Web.Pages.Products
         };
 
         [BindProperty]
-        public ProductViewModel Product { get; set; } = new ProductViewModel();
+        public ProductDetailsDto Product { get; set; } = new ProductDetailsDto();
 
-        public IndexModel(ProductsProvider productsProvider)
+        public IndexModel(IProductService productService)
         {
-            _productsProvider = productsProvider;
+            _productService = productService;
         }
 
-        public void OnGet()
+        public async Task OnGetAsync()
         {
-            Products = _productsProvider.Products;
+            Products = await _productService.BrowseAsync(string.Empty);
         }
 
-        public IActionResult OnPost()
+        public async Task<IActionResult> OnPostAsync()
         {
             if (!ModelState.IsValid)
             {
                 return Page();
             }
+
             Product.Id = Guid.NewGuid();
-            _productsProvider.Products.Add(Product);
+            await _productService.AddAsync(Product);
 
             return RedirectToPage();
         }
 
-        public IActionResult OnPostDelete(Guid id)
+        public async Task<IActionResult> OnPostDeleteAsync(Guid id)
         {
-            var product = _productsProvider.Products.SingleOrDefault(p => p.Id == id);
-            _productsProvider.Products.Remove(product);
+            await _productService.DeleteAsync(id);
 
             return RedirectToPage();
         }

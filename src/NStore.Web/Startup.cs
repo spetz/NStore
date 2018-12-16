@@ -8,6 +8,9 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
+using NStore.Core.Domain.Repositories;
+using NStore.Core.Infrastructure.Cache.Repositories;
+using NStore.Core.Services.Products;
 using NStore.Web.Framework;
 using NStore.Web.ViewModels;
 using Swashbuckle.AspNetCore.Swagger;
@@ -55,6 +58,9 @@ namespace NStore.Web
             services.AddMemoryCache();
             services.AddHealthChecks()
                 .AddCheck<RandomHealthCheck>("random");
+
+            services.AddTransient<IProductService, ProductService>();
+            services.AddSingleton<IProductRepository, InMemoryProductRepository>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

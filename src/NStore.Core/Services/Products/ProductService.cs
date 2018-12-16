@@ -70,7 +70,7 @@ namespace NStore.Core.Services.Products
             await _productRepository.UpdateAsync(product);
         }
 
-        public async Task RemoveAsync(Guid id)
+        public async Task DeleteAsync(Guid id)
         {
             var product = await _productRepository.GetAsync(id);
             if (product == null)
